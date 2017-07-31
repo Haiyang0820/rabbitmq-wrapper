@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by cpu11118-local on 28/07/2017.
@@ -27,7 +28,7 @@ public class ParameterizedTestFields {
     // creates the test data
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        Object[][] data = new Object[][] { { 1 , 2, 2 }, { 5, 3, 15 }, { 121, 4, 484 }, { 121, 4, 484 } };
+        Object[][] data = new Object[][] { { 1 , 2, 2 }, { 5, 3, 15 }, { 121, 4, 48422 }, { 121, 4, 4843 } };
         return Arrays.asList(data);
     }
 
@@ -35,7 +36,10 @@ public class ParameterizedTestFields {
     @Test
     public void testMultiplyException() {
         FunctionallyTest tester = new FunctionallyTest();
+
         assertEquals("Result========>", result, tester.multiply(m1, m2));
+        fail("FAIL ;;;;");
+        fail();
     }
 
 }

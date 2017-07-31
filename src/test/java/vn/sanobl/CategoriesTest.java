@@ -13,10 +13,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by cpu11118-local on 28/07/2017.
  */
-
-
-
-
 @RunWith(Categories.class)
 @Categories.IncludeCategory(CategoriesTest.FastTests.class)
 @Suite.SuiteClasses({ A.class, B.class })

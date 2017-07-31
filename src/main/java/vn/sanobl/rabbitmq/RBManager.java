@@ -21,6 +21,7 @@ public class RBManager {
     private RBChannelPool _rbChannelPool = null;
     private final AtomicInteger _connectionCount = new AtomicInteger(0);
     private Connection _connection = null;
+    private ConnectionFactory mConnectionFactory;
 
     public static RBManager getInstance(RBConfiguration rbConfiguration) throws IOException, TimeoutException {
         String key = rbConfiguration.getListhost();
@@ -31,7 +32,7 @@ public class RBManager {
     }
 
     private RBManager(RBConfiguration rbConfiguration) throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
+        mConnectionFactory = new ConnectionFactory();
         String[] urls = rbConfiguration.getListhost().split(";");
         List<Address> addresses = new LinkedList<Address>();
         for (String url : urls) {
@@ -40,12 +41,12 @@ public class RBManager {
             int port = parseInt(urlInf[1]);
             addresses.add(new Address(hostname, port));
         }
-        factory.setConnectionTimeout(20);
-        factory.setUsername(rbConfiguration.getUsername());
-        factory.setPassword(rbConfiguration.getPassword());
-        factory.setVirtualHost(rbConfiguration.getVirtualhost());
-        factory.setAutomaticRecoveryEnabled(true);
-        _connection = factory.newConnection(addresses.toArray(new Address[addresses.size()]));
+        mConnectionFactory.setConnectionTimeout(20);
+        mConnectionFactory.setUsername(rbConfiguration.getUsername());
+        mConnectionFactory.setPassword(rbConfiguration.getPassword());
+        mConnectionFactory.setVirtualHost(rbConfiguration.getVirtualhost());
+        mConnectionFactory.setAutomaticRecoveryEnabled(true);
+        _connection = mConnectionFactory.newConnection(addresses.toArray(new Address[addresses.size()]));
         _connectionCount.incrementAndGet();
         this._rbChannelPool = new RBChannelPool(_connection);
 
@@ -176,5 +177,17 @@ public class RBManager {
 
     public int countChannel() {
         return _rbChannelPool.countChannel();
+    }
+
+    public RBChannelPool get_rbChannelPool() {
+        return _rbChannelPool;
+    }
+
+    public Connection get_connection() {
+        return _connection;
+    }
+
+    public ConnectionFactory getmConnectionFactory() {
+        return mConnectionFactory;
     }
 }

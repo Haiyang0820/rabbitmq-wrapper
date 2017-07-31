@@ -8,9 +8,19 @@
   <packaging>jar</packaging>
   <name>vn.sanobl.rabbitmq</name>
   <url>http://maven.apache.org</url>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <slf4j.version>1.7.23</slf4j.version>
+    <metrics.version>3.1.2</metrics.version>
+    <logback.version>1.2.1</logback.version>
+    <commons-cli.version>1.1</commons-cli.version>
+    <junit.version>4.12</junit.version>
+    <awaitility.version>2.0.0</awaitility.version>
+    <mockito.version>2.7.9</mockito.version>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.rabbitmq</groupId>
@@ -23,13 +33,28 @@
       <artifactId>commons-pool</artifactId>
       <version>1.6</version>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
   <build>
     <finalName>rabbitmq-sanobl</finalName>
     <plugins>
@@ -74,4 +99,5 @@
       </extension>
     </extensions>
   </build>
+
 </project>
