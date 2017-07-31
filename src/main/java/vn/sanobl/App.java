@@ -16,7 +16,7 @@ public class App {
         while (i < 10000) {
             try {
                 String abc = "Banwgf Nguyễn + " + i;
-                RBManager.getInstance(rbConfiguration).setMessage("graphite2", "graph1","abc1", abc, BuiltinExchangeType.TOPIC.getType());
+                RBManager.getInstance(rbConfiguration).setMessage("graphite2", "graph1","", abc, BuiltinExchangeType.TOPIC.getType());
 //                RBManager.getInstance(rbConfiguration).close();
 
             } catch (RuntimeException e) {
@@ -26,7 +26,7 @@ public class App {
             }
             String message = null;
             try {
-                message = RBManager.getInstance(rbConfiguration).getMessage("graphite2", "graph1","abc1",BuiltinExchangeType.TOPIC.getType());
+                message = RBManager.getInstance(rbConfiguration).getMessage("graphite2", "graph1","",BuiltinExchangeType.TOPIC.getType());
             } catch (Exception e) {
                 e.printStackTrace();
             }
