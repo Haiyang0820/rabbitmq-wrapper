@@ -30,7 +30,7 @@ public class SendReceiverMessage  extends RabbitMQBorkerTestCase{
 
     @Parameterized.Parameters
     public static Collection<Object[]> initParam(){
-        Object[][] data = new Object[][] { { "Tran Van B", "Tran Van B" } };
+        Object[][] data = new Object[][] { { "Tran Van B", "Tran Van B" }, { "Tran Van Canh", "Tran Van B" } };
         return Arrays.asList(data);
     }
 
@@ -56,66 +56,59 @@ public class SendReceiverMessage  extends RabbitMQBorkerTestCase{
 
 
     @Test
-    public void sendAndReceiverMessageWithExchangeTopic(){
-        try {
-            rbManager.setMessage("topicExchange1", "root", "", message, "topic");
+    public void sendAndReceiverMessageWithExchangeTopic() throws Exception {
+        String queueName = "abc";
+        //receive message
+        Channel reChannel = rbManager.get_rbChannelPool().borrowClient();
+        reChannel.exchangeDeclare("demoExchange", "topic");
+//        reChannel.queueDeclare(queueName, true, false, false, null);
+        queueName = reChannel.queueDeclare().getQueue();
+        reChannel.queueBind(queueName, "demoExchange", "black");
+        final BlockingQueue<String> queueBlocking = new ArrayBlockingQueue<String>(1);
+        reChannel.basicConsume(queueName, new DefaultConsumer(reChannel){
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String reMessage = new String(body, "UTF-8");
+                queueBlocking.offer(reMessage);
+            }
+        });
+        //send message
+        Channel senChannel = rbManager.get_rbChannelPool().borrowClient();
+        senChannel.exchangeDeclare("demoExchange", "topic");
+//        senChannel.queueDeclare(queueName, true, false, false, null);
+        senChannel.basicPublish("demoExchange", "black", null, message.getBytes());
+        rbManager.get_rbChannelPool().returnObject(senChannel);
 
-            //handler receiver
-            Channel channel = rbManager.get_rbChannelPool().borrowClient();
-            channel.exchangeDeclare("topicExchange1", "topic", true);
-            String nameQueue = channel.queueDeclare().getQueue();
-//            channel.queueDeclare("abc", true, false, false, null);
-            channel.queueBind(nameQueue, "topicExchange1", "root");
-//            GetResponse response = channel.basicGet("abc", true);
-            final ArrayBlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
-            Consumer consumer = new DefaultConsumer(channel){
-                @Override
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    String result = new String(body, "UTF-8");
-                    blockingQueue.offer(result);
-
-                }
-            };
-//            channel.queueBind("abc", "topicExchange1", "root");
-            channel.basicConsume(nameQueue, true, consumer);
-            String str = blockingQueue.take();
-            Assert.assertEquals("sendAndReceiverMessageWithExchangeTopic Error ==>>", result, str);
-//            if(response == null){
-//                Assert.assertNotNull("Not receive message",response);
-//            }else {
-//                String str = new String(response.getBody(), "UTF-8");
-//                System.out.println(str);
-//                Assert.assertEquals("sendAndReceiverMessageWithExchangeTopic Error ==>>", result, str);
-//            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String reResult = queueBlocking.take();
+        Assert.assertEquals("sendAndReceiverMessageWithExchangeTopic",result, reResult);
+        rbManager.get_rbChannelPool().returnObject(reChannel);
     }
 
 
-    public void sendAndReceiverMessageWithExchangeDirect(){
-        try {
-            rbManager.setMessage("directExchange1", "root", "", message, "direct");
-            //handler receiver
-            Channel channel = rbManager.get_rbChannelPool().borrowClient();
-            channel.exchangeDeclare("directExchange1", "direct", true);
-            String nameQueue = channel.queueDeclare().getQueue();
-            final BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
-            Consumer consumer = new DefaultConsumer(channel){
-                @Override
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    String result = new String(body, "UTF-8");
-                    blockingQueue.offer(result);
+    @Test
+    public void sendAndReceiverMessageWithExchangeDirect() throws Exception {
+        //receive message
+        Channel reChannel = rbManager.get_rbChannelPool().borrowClient();
+        reChannel.exchangeDeclare("demoExchange2", "direct");
+        String queueName = reChannel.queueDeclare().getQueue();
+        reChannel.queueBind(queueName, "demoExchange2", "black");
+        final BlockingQueue<String> queueBlocking = new ArrayBlockingQueue<String>(1);
+        reChannel.basicConsume(queueName, new DefaultConsumer(reChannel){
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String reMessage = new String(body, "UTF-8");
+                queueBlocking.offer(reMessage);
+            }
+        });
+        //send message
+        Channel senChannel = rbManager.get_rbChannelPool().borrowClient();
+        senChannel.exchangeDeclare("demoExchange2", "direct");
+        senChannel.basicPublish("demoExchange2", "black", null, message.getBytes());
+        rbManager.get_rbChannelPool().returnObject(senChannel);
+        String reResult = queueBlocking.take();
+        Assert.assertEquals("sendAndReceiverMessageWithExchangeDirect",result, reResult);
 
-                }
-            };
-            channel.queueBind(nameQueue, "directExchange1", "root");
-            channel.basicConsume(nameQueue, true, consumer);
-            String str = blockingQueue.take();
-            Assert.assertEquals("sendAndReceiverMessageWithExchangeDirect Error ==>>",result, str);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        rbManager.get_rbChannelPool().returnObject(reChannel);
     }
 
 }
