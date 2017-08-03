@@ -20,7 +20,6 @@ public class RBChannelPool {
     }
 
     private GenericObjectPool createPool(RBChannelFactory cf) {
-        System.out.println("start createPool Channel");
         GenericObjectPool p = new GenericObjectPool<>(cf);
         p.setMaxActive(20);
         p.setMaxIdle(20);
@@ -43,7 +42,6 @@ public class RBChannelPool {
     }
 
     public void close() {
-        System.out.println("close pool channel");
         try {
             if (null != _pool)
                 _pool.close();
