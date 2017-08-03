@@ -21,7 +21,7 @@ import static org.junit.Assert.fail;
  */
 public class QueueingConsumer  extends RabbitMQBorkerTestCase{
 
-    static final String QUEUE = "queueDefault";
+    static final String QUEUE = "XXXXXXXX";
     static final int THREADS = 5;
 
     @Before

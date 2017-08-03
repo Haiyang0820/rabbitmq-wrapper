@@ -18,8 +18,6 @@ import java.util.concurrent.TimeoutException;
  */
 public class RabbitMQBorkerTestCase {
 
-    protected final String QUEUE_NAME = "queueDefault";
-
     protected RBManager rbManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQBorkerTestCase.class);
