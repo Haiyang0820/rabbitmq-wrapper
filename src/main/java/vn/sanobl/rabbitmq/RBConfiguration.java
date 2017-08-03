@@ -10,12 +10,16 @@ public class RBConfiguration {
     private String password;
     private String virtualhost;
 
+    public RBConfiguration() {
+    }
+
     public RBConfiguration(String listhost, String username, String password, String virtualhost) {
         this.listhost = listhost;
         this.username = username;
         this.password = password;
         this.virtualhost = virtualhost;
     }
+
     public String getListhost() {
         return listhost;
     }
