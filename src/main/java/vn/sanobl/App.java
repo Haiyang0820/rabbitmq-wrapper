@@ -13,7 +13,7 @@ public class App {
         RBConfiguration rbConfiguration = new RBConfiguration("localhost:5672;localhost:5673;localhost:5674", "myuser", "mypass", "/");
         RBConfiguration rbConfiguration2 = new RBConfiguration("localhost:5672;localhost:5672", "hotro", "1235", "/");
         int i = 0;
-        while (i < 10000) {
+        while (i < 10) {
             try {
                 String abc = "Banwgf Nguyễn + " + i;
                 RBManager.getInstance(rbConfiguration).setMessage("graphite2", "graph1","", abc, BuiltinExchangeType.TOPIC.getType());
@@ -34,7 +34,7 @@ public class App {
             i++;
         }
         try {
-            Thread.sleep(1000000);
+            Thread.sleep(60000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -11,7 +11,6 @@ import org.junit.runners.Parameterized;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -30,7 +29,7 @@ public class SendReceiverMessage  extends RabbitMQBorkerTestCase{
 
     @Parameterized.Parameters
     public static Collection<Object[]> initParam(){
-        Object[][] data = new Object[][] { { "Tran Van B", "Tran Van B" }, { "Tran Van Canh", "Tran Van B" } };
+        Object[][] data = new Object[][] { { "Tran Van B", "Tran Van B" }, { "Tran Van Canh", "Tran Van Canh" } };
         return Arrays.asList(data);
     }
 
@@ -57,11 +56,12 @@ public class SendReceiverMessage  extends RabbitMQBorkerTestCase{
 
     @Test
     public void sendAndReceiverMessageWithExchangeTopic() throws Exception {
-        String queueName = "abc";
+        String queueName = "abc21211";
+
+
         //receive message
         Channel reChannel = rbManager.get_rbChannelPool().borrowClient();
         reChannel.exchangeDeclare("demoExchange", "topic");
-//        reChannel.queueDeclare(queueName, true, false, false, null);
         queueName = reChannel.queueDeclare().getQueue();
         reChannel.queueBind(queueName, "demoExchange", "black");
         final BlockingQueue<String> queueBlocking = new ArrayBlockingQueue<String>(1);
@@ -69,16 +69,15 @@ public class SendReceiverMessage  extends RabbitMQBorkerTestCase{
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String reMessage = new String(body, "UTF-8");
+                System.out.println(reMessage);
                 queueBlocking.offer(reMessage);
             }
         });
         //send message
         Channel senChannel = rbManager.get_rbChannelPool().borrowClient();
         senChannel.exchangeDeclare("demoExchange", "topic");
-//        senChannel.queueDeclare(queueName, true, false, false, null);
         senChannel.basicPublish("demoExchange", "black", null, message.getBytes());
         rbManager.get_rbChannelPool().returnObject(senChannel);
-
         String reResult = queueBlocking.take();
         Assert.assertEquals("sendAndReceiverMessageWithExchangeTopic",result, reResult);
         rbManager.get_rbChannelPool().returnObject(reChannel);

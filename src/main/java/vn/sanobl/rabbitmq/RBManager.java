@@ -105,6 +105,7 @@ public class RBManager {
             channel.queueDeclare(queueName, true, false, false, null);
             channel.queueBind(queueName, exchangeName, routingKey);
         }
+        System.out.println("[=>] Send message : " + message);
         channel.basicPublish(exchangeName, routingKey, new AMQP.BasicProperties.Builder()
                 .contentType("text/plain").deliveryMode(1).build(), message.getBytes());
     }
