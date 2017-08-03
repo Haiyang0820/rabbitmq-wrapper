@@ -119,6 +119,7 @@ public class RabbitMQChanels extends RabbitMQBorkerTestCase{
         int rpcTimeout = 100;
         AMQConnection connection = mock(AMQConnection.class);
         when(connection.getChannelRpcTimeout()).thenReturn(rpcTimeout);
+//        when(connection.willCheckRpcResponseType()).thenReturn(Boolean.TRUE);
 
         final DummyAmqChannel channel = new DummyAmqChannel(connection, 1);
         Method method = new AMQImpl.Queue.Declare.Builder()
@@ -163,10 +164,10 @@ public class RabbitMQChanels extends RabbitMQBorkerTestCase{
                 channel.handleCompleteInboundCommand(new AMQCommand(response2));
                 return null;
             }
-        }, (long) (rpcTimeout / 2.0), TimeUnit.MILLISECONDS);
+        }, (long) (rpcTimeout/2.0), TimeUnit.MILLISECONDS);
 
         AMQCommand rpcResponse = channel.rpc(method);
-        assertThat(rpcResponse.getMethod(), is(response2));
+        assertThat("Rabbit version  not support RPC reply response type",rpcResponse.getMethod(), is(response2));
     }
 
     static class DummyAmqChannel extends AMQChannel {
